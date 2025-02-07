@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
+use Ramsey\Uuid\Uuid;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -23,12 +24,15 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $time = time();
+
         return [
-            'name' => fake()->name(),
+            'profilelink' => $time,
+            'profilename' => $time,
             'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
-            'remember_token' => Str::random(10),
+            'type' => 'regular',
+            'token' => self::hash(),
+            'activity_at' => now(),
         ];
     }
 
@@ -40,5 +44,15 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
+    }
+
+    private function uuid(): string
+    {
+        return Uuid::uuid4()->toString();
+    }
+
+    private function hash(string $algo = 'sha256'): string
+    {
+        return hash($algo, self::uuid());
     }
 }
