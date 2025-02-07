@@ -1,9 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 return [
-    'default' => 'default',
+
+    'default' => 'rpc',
+
     'documentations' => [
-        'default' => [
+
+        'rpc' => [
+
             'api' => [
                 'title' => 'L5 Swagger UI',
             ],
@@ -12,8 +18,11 @@ return [
                 /*
                  * Route for accessing api documentation interface
                  */
-                'api' => 'api/documentation',
+                'api' => 'docs',
+                'docs' => 'docs',
+                // 'oauth2_callback' => 'docs/oauth2-callback',
             ],
+
             'paths' => [
                 /*
                  * Edit to include full URL in ui for assets
@@ -21,19 +30,19 @@ return [
                 'use_absolute_path' => env('L5_SWAGGER_USE_ABSOLUTE_PATH', true),
 
                 /*
-                * Edit to set path where swagger ui assets should be stored
-                */
+                 * Edit to set path where swagger ui assets should be stored
+                 */
                 'swagger_ui_assets_path' => env('L5_SWAGGER_UI_ASSETS_PATH', 'vendor/swagger-api/swagger-ui/dist/'),
 
                 /*
                  * File name of the generated json documentation file
                  */
-                'docs_json' => 'api-docs.json',
+                'docs_json' => 'rpc.json',
 
                 /*
                  * File name of the generated YAML documentation file
                  */
-                'docs_yaml' => 'api-docs.yaml',
+                'docs_yaml' => 'rpc.yaml',
 
                 /*
                  * Set this to `json` or `yaml` to determine which documentation file to use in UI
@@ -44,12 +53,14 @@ return [
                  * Absolute paths to directory containing the swagger annotations are stored.
                  */
                 'annotations' => [
-                    base_path('app'),
+                    base_path('app/Swagger'),
                 ],
             ],
         ],
     ],
+
     'defaults' => [
+
         'routes' => [
             /*
              * Route for accessing parsed swagger annotations.
@@ -167,8 +178,9 @@ return [
 
         /*
          * API security definitions. Will be generated into documentation file.
-        */
+         */
         'securityDefinitions' => [
+
             'securitySchemes' => [
                 /*
                  * Examples of Security schemes
@@ -226,7 +238,6 @@ return [
                         'read',
                         'write'
                     ],
-
                     'passport' => []
                     */
                 ],
@@ -273,8 +284,11 @@ return [
          * Swagger UI configuration parameters
          */
         'ui' => [
+
             'display' => [
+
                 'dark_mode' => env('L5_SWAGGER_UI_DARK_MODE', false),
+
                 /*
                  * Controls the default expansion setting for the operations and tags. It can be :
                  * 'list' (expands only the tags),
@@ -308,6 +322,7 @@ return [
                 ],
             ],
         ],
+
         /*
          * Constants which can be used in annotations
          */
