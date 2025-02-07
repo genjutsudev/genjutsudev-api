@@ -8,7 +8,7 @@ use OpenApi\Annotations as OA;
 
 /**
  *  @OA\Info(
- *      title="spzpru-api",
+ *      title="genjutsudev-api",
  *      version="1.0.0",
  *  ),
  */
