@@ -11,7 +11,6 @@ use Sajya\Server\Exceptions\InvalidParams;
 use Sajya\Server\Procedure;
 use Webmozart\Assert\Assert;
 
-
 class UserProcedure extends Procedure
 {
     private const LIMIT_PER_PAGE = 100;
