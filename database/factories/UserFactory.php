@@ -24,11 +24,11 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        $time = time();
+        $id = uniqid();
 
         return [
-            'profilelink' => $time,
-            'profilename' => $time,
+            'profilelink' => $id,
+            'profilename' => $id,
             'email' => fake()->unique()->safeEmail(),
             'type' => 'regular',
             'token' => self::hash(),
