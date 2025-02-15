@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures;
 
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use Ramsey\Uuid\Uuid;
 use Sajya\Server\Exceptions\InvalidParams;
 use Sajya\Server\Procedure;
 use Webmozart\Assert\Assert;
@@ -53,6 +55,24 @@ class UserProcedure extends Procedure
             'items' => $p->items(),
             'page_info' => self::pageInfo($p),
         ];
+    }
+
+    /**
+     * Execute the procedure.
+     *
+     * @param Request $request
+     *
+     * @return array|string|integer
+     */
+    public function create(RegisterRequest $request): User
+    {
+        return User::create(array_merge($request->all(), [
+            'profilelink' => $name = uniqid(),
+            'profilename' => $name,
+            'type' => 'regular',
+            'token' => Uuid::uuid4()->toString(),
+            'activity_at' => now(),
+        ]));;
     }
 
     private function pageInfo(Paginator $p): array

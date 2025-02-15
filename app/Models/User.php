@@ -49,8 +49,13 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'profilelink',
         'email',
         'password',
+        'profilename',
+        'token',
+        'activity_at',
+        'api_key',
     ];
 
     /**
@@ -73,6 +78,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'birthday' => 'date',
+            'activity_at' => 'datetime',
         ];
     }
 }
