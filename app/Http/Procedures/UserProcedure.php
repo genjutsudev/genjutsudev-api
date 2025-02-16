@@ -18,6 +18,18 @@ class UserProcedure extends Procedure
     private const LIMIT_PER_PAGE = 100;
     private const DEFAULT_PER_PAGE = 100;
 
+    private function pageInfo(Paginator $paginator): array
+    {
+        $lastPage = $paginator->lastPage();
+        $currPage = $paginator->currentPage();
+
+        return [
+            'last_page' => $lastPage,
+            'is_first_page' => $currPage <= 1,
+            'has_next_page' => $currPage < $lastPage,
+        ];
+    }
+
     /**
      * The name of the procedure that is used for referencing.
      *
@@ -72,18 +84,6 @@ class UserProcedure extends Procedure
             'type' => 'regular',
             'token' => Uuid::uuid4()->toString(),
             'activity_at' => now(),
-        ]));;
-    }
-
-    private function pageInfo(Paginator $p): array
-    {
-        $lastPage = $p->lastPage();
-        $currPage = $p->currentPage();
-
-        return [
-            'last_page' => $lastPage,
-            'is_first_page' => $currPage <= 1,
-            'has_next_page' => $currPage < $lastPage,
-        ];
+        ]));
     }
 }
