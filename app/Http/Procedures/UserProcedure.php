@@ -9,20 +9,20 @@ use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use Illuminate\Support\Carbon;
 use Sajya\Server\Exceptions\InvalidParams;
 use Sajya\Server\Procedure;
-use Webmozart\Assert\Assert;
 
 class UserProcedure extends Procedure
 {
     /**
      * @var int
      */
-    private const LIMIT_PER_PAGE = (int) 100;
+    private const LIMIT_PER_PAGE = 100;
     /**
      * @var int
      */
-    private const DEFAULT_PER_PAGE = (int) 100;
+    private const DEFAULT_PER_PAGE = 100;
 
     /**
      * The name of the procedure that is used for referencing.
@@ -42,15 +42,15 @@ class UserProcedure extends Procedure
     {
         // User::factory()->count(5000)->create();
 
-        // Assert::lessThanEq($perPage = $request->input('limit', self::DEFAULT_PER_PAGE), self::LIMIT_PER_PAGE);
-
         if (
             self::LIMIT_PER_PAGE < $perPage = $request->input('limit', self::DEFAULT_PER_PAGE)
         ) {
             throw new InvalidParams(['limit' => self::LIMIT_PER_PAGE]);
         }
 
-        /** @var Paginator $p */
+        /**
+         * @var Paginator $p
+         */
         $p = User::query()->paginate(
             perPage: $perPage,
             page: $page = $request->input('page', 1),
@@ -77,10 +77,17 @@ class UserProcedure extends Procedure
             'profilename' => $name,
             'type' => 'regular',
             'token' => Generator::generateToken(),
-            'activity_at' => now(),
+            'activity_at' => Carbon::now(),
         ]));
     }
 
+    /**
+     * for test
+     *
+     * @param Request $request
+     *
+     * @return string
+     */
     public function token(Request $request): string
     {
         return Generator::generateToken($request->input('algo', 'sha256'));
