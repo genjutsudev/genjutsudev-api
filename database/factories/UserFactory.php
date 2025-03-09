@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Helpers\Generator;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Ramsey\Uuid\Uuid;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -31,7 +31,7 @@ class UserFactory extends Factory
             'profilename' => $id,
             'email' => fake()->unique()->safeEmail(),
             'type' => 'regular',
-            'token' => self::hash(),
+            'token' => Generator::generateToken('md5'),
             'activity_at' => now(),
         ];
     }
@@ -44,15 +44,5 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
-    }
-
-    private function uuid(): string
-    {
-        return Uuid::uuid4()->toString();
-    }
-
-    private function hash(string $algo = 'sha256'): string
-    {
-        return hash($algo, self::uuid());
     }
 }

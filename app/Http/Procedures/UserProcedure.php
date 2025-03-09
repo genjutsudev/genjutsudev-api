@@ -4,18 +4,24 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures;
 
+use App\Helpers\Generator;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Ramsey\Uuid\Uuid;
+use Illuminate\Support\Carbon;
 use Sajya\Server\Exceptions\InvalidParams;
 use Sajya\Server\Procedure;
-use Webmozart\Assert\Assert;
 
 class UserProcedure extends Procedure
 {
+    /**
+     * @var int
+     */
     private const LIMIT_PER_PAGE = 100;
+    /**
+     * @var int
+     */
     private const DEFAULT_PER_PAGE = 100;
 
     /**
@@ -36,15 +42,15 @@ class UserProcedure extends Procedure
     {
         // User::factory()->count(5000)->create();
 
-        // Assert::lessThanEq($perPage = $request->input('limit', self::DEFAULT_PER_PAGE), self::LIMIT_PER_PAGE);
-
         if (
             self::LIMIT_PER_PAGE < $perPage = $request->input('limit', self::DEFAULT_PER_PAGE)
         ) {
             throw new InvalidParams(['limit' => self::LIMIT_PER_PAGE]);
         }
 
-        /** @var Paginator $p */
+        /**
+         * @var Paginator $p
+         */
         $p = User::query()->paginate(
             perPage: $perPage,
             page: $page = $request->input('page', 1),
@@ -70,15 +76,36 @@ class UserProcedure extends Procedure
             'profilelink' => $name = uniqid(),
             'profilename' => $name,
             'type' => 'regular',
-            'token' => Uuid::uuid4()->toString(),
-            'activity_at' => now(),
-        ]));;
+            'token' => Generator::generateToken(),
+            'activity_at' => Carbon::now(),
+        ]));
     }
 
-    private function pageInfo(Paginator $p): array
+    /**
+     * for test
+     *
+     * @param Request $request
+     *
+     * @return string
+     */
+    public function token(Request $request): string
     {
-        $lastPage = $p->lastPage();
-        $currPage = $p->currentPage();
+        return Generator::generateToken($request->input('algo', 'sha256'));
+    }
+
+    /**
+     * @param Paginator $paginator
+     *
+     * @return array{
+     *  has_next_page: bool,
+     *  is_first_page: bool,
+     *  last_page: int,
+     * }
+     */
+    private function pageInfo(Paginator $paginator): array
+    {
+        $lastPage = $paginator->lastPage();
+        $currPage = $paginator->currentPage();
 
         return [
             'last_page' => $lastPage,
