@@ -4,31 +4,25 @@ declare(strict_types=1);
 
 namespace App\Http\Procedures;
 
+use App\Helpers\Generator;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Ramsey\Uuid\Uuid;
 use Sajya\Server\Exceptions\InvalidParams;
 use Sajya\Server\Procedure;
 use Webmozart\Assert\Assert;
 
 class UserProcedure extends Procedure
 {
-    private const LIMIT_PER_PAGE = 100;
-    private const DEFAULT_PER_PAGE = 100;
-
-    private function pageInfo(Paginator $paginator): array
-    {
-        $lastPage = $paginator->lastPage();
-        $currPage = $paginator->currentPage();
-
-        return [
-            'last_page' => $lastPage,
-            'is_first_page' => $currPage <= 1,
-            'has_next_page' => $currPage < $lastPage,
-        ];
-    }
+    /**
+     * @var int
+     */
+    private const LIMIT_PER_PAGE = (int) 100;
+    /**
+     * @var int
+     */
+    private const DEFAULT_PER_PAGE = (int) 100;
 
     /**
      * The name of the procedure that is used for referencing.
@@ -82,8 +76,34 @@ class UserProcedure extends Procedure
             'profilelink' => $name = uniqid(),
             'profilename' => $name,
             'type' => 'regular',
-            'token' => Uuid::uuid4()->toString(),
+            'token' => Generator::generateToken(),
             'activity_at' => now(),
         ]));
+    }
+
+    public function token(Request $request): string
+    {
+        return Generator::generateToken($request->input('algo', 'sha256'));
+    }
+
+    /**
+     * @param Paginator $paginator
+     *
+     * @return array{
+     *  has_next_page: bool,
+     *  is_first_page: bool,
+     *  last_page: int,
+     * }
+     */
+    private function pageInfo(Paginator $paginator): array
+    {
+        $lastPage = $paginator->lastPage();
+        $currPage = $paginator->currentPage();
+
+        return [
+            'last_page' => $lastPage,
+            'is_first_page' => $currPage <= 1,
+            'has_next_page' => $currPage < $lastPage,
+        ];
     }
 }

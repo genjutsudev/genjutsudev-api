@@ -29,4 +29,25 @@ class RegisterRequest extends FormRequest
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ];
     }
+
+    /**
+     * @todo text
+     * @throws \Exception
+     * @return void
+     */
+    public function registere()
+    {
+        $command = Create\Command::fromRequest($this);
+
+        try {
+            $user = $this->create->handle($command);
+        } catch (\Throwable $th) {
+            throw new \Exception($th->getMessage());
+        }
+
+        event(new Registered($user));
+
+        Auth::login($user);
+    }
+
 }

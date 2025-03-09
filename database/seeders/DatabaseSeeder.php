@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use App\Helpers\Generator;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Ramsey\Uuid\Uuid;
 
 class DatabaseSeeder extends Seeder
 {
@@ -36,17 +36,7 @@ class DatabaseSeeder extends Seeder
             'type' => 'api',
             'token' => null,
             'is_active' => true,
-            'api_key' => self::hash(),
+            'api_key' => Generator::generateToken('sha512'),
         ]);
-    }
-
-    private function uuid(): string
-    {
-        return Uuid::uuid4()->toString();
-    }
-
-    private function hash(string $algo = 'sha256'): string
-    {
-        return hash($algo, self::uuid());
     }
 }
